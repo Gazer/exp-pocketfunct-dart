@@ -5,9 +5,12 @@ import 'dart:typed_data';
 import 'package:pocket_functions/pocket_functions.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:cron/cron.dart';
 
 class EntryPoint {
-  const EntryPoint();
+  final _cron = Cron();
+
+  EntryPoint();
 
   onRequest(Function(PocketRequest) req) async {
     final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -42,10 +45,16 @@ class EntryPoint {
     print('Process is listening for changes');
   }
 
+  cron(String schedule, Function cb) {
+    _cron.schedule(Schedule.parse(schedule), () async {
+      cb();
+    });
+  }
+
   Future<Uint8List> _readAsUint8List(Stream<List<int>> stream) async {
     final List<int> data = await stream.expand((chunk) => chunk).toList();
     return Uint8List.fromList(data);
   }
 }
 
-const entryPoint = EntryPoint();
+final entryPoint = EntryPoint();

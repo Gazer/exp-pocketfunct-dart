@@ -16,6 +16,7 @@ dependencies:
   source_gen: ^1.0.0
   analyzer: ^5.0.0
   archive: ^3.3.0
+  cron: ^0.6.1
 
 dev_dependencies:
   lints: ^4.0.0
