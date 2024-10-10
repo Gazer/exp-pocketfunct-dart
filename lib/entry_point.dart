@@ -46,6 +46,7 @@ class EntryPoint {
   }
 
   cron(String schedule, Function cb) {
+    print("Scheduling cron job for $schedule");
     _cron.schedule(Schedule.parse(schedule), () async {
       cb();
     });
