@@ -18,7 +18,7 @@ void main(List<String> args) async {
 
   print("Pocket Functions Deploy for $packageName\n");
   var functionPath =
-      pocketFunctionConfig["path"] ?? "${packageName.replaceAll("_", "-")}";
+      pocketFunctionConfig["name"] ?? "${packageName.replaceAll("_", "-")}";
 
   var zipFileName = "$packageName.zip";
   await createPackageZip(".", zipFileName);
