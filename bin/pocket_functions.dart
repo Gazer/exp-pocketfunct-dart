@@ -18,7 +18,7 @@ void main(List<String> args) async {
 
   print("Pocket Functions Deploy for $packageName\n");
   var functionPath =
-      pocketFunctionConfig["path"] ?? "/${packageName.replaceAll("_", "-")}";
+      pocketFunctionConfig["path"] ?? "${packageName.replaceAll("_", "-")}";
 
   var zipFileName = "$packageName.zip";
   await createPackageZip(".", zipFileName);
@@ -39,7 +39,7 @@ Future<int> _createFunction(
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode(<String, String>{
-      'uri': functionPath,
+      'name': functionPath,
     }),
   );
 
