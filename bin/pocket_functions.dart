@@ -5,7 +5,8 @@ import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
 import 'package:pocket_functions/zipper.dart';
 import 'package:yaml/yaml.dart';
-import 'package:yaml_writer/yaml_writer.dart';
+
+const apiKeyHeaderName = "ApiKey";
 
 void main(List<String> args) async {
   // var options = parseOptions(args);
@@ -20,23 +21,33 @@ void main(List<String> args) async {
   var functionPath =
       pocketFunctionConfig["name"] ?? "${packageName.replaceAll("_", "-")}";
 
+  var apiKey = pocketFunctionConfig['api_key'];
+
+  if (apiKey == null || "$apiKey".isEmpty) {
+    print(
+        "You need to add your API key to the pocket_functions section of your pubspec.yaml file\n");
+    exit(1);
+  }
+
   var zipFileName = "$packageName.zip";
   await createPackageZip(".", zipFileName);
 
-  var id = await _createFunction(functionPath);
-  await _deployFunction(id, zipFileName);
+  var id = await _createFunction(functionPath, "$apiKey");
+  await _deployFunction(id, zipFileName, "$apiKey");
 }
 
 Future<int> _createFunction(
   String functionPath,
+  String apiKey,
 ) async {
-  print("Starting deploy to $functionPath ...\n");
+  print("Starting deploy to $functionPath ...$apiKey\n");
 
   final uri = Uri.parse("http://localhost:8080/api");
   var response = await http.post(
     uri,
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
+      apiKeyHeaderName: apiKey,
     },
     body: jsonEncode(<String, String>{
       'name': functionPath,
@@ -56,11 +67,13 @@ Future<int> _createFunction(
 Future<void> _deployFunction(
   int id,
   String zipFilePath,
+  String apiKey,
 ) async {
   final uri = Uri.parse("http://localhost:8080/api/$id/upload");
   final request = http.MultipartRequest('POST', uri);
 
   final fileName = p.basename(zipFilePath);
+  request.headers[apiKeyHeaderName] = apiKey;
   request.files.add(await http.MultipartFile.fromPath(
     'file',
     zipFilePath,
