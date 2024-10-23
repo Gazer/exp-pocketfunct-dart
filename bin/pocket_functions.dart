@@ -32,7 +32,7 @@ Future<int> _createFunction(
 ) async {
   print("Starting deploy to $functionPath ...\n");
 
-  final uri = Uri.parse("http://localhost:8080/api/create");
+  final uri = Uri.parse("http://localhost:8080/api");
   var response = await http.post(
     uri,
     headers: <String, String>{
@@ -57,7 +57,7 @@ Future<void> _deployFunction(
   int id,
   String zipFilePath,
 ) async {
-  final uri = Uri.parse("http://localhost:8080/api/upload/$id");
+  final uri = Uri.parse("http://localhost:8080/api/$id/upload");
   final request = http.MultipartRequest('POST', uri);
 
   final fileName = p.basename(zipFilePath);
